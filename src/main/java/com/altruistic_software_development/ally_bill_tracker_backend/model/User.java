@@ -41,5 +41,5 @@ leading to slower queries and higher memory usage.
     */
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    private Set<String> roles;
+    private Set<Role> roles;
 }
