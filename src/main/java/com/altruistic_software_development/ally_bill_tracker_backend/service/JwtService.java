@@ -51,7 +51,7 @@ public class JwtService {
      * - The token includes custom claims (`roles`)
      * - Signature algorithm: HS256 (HMAC using SHA-256)
      */
-    private String generateToken(String userId, Set<Role> roles) {
+    public String generateToken(String userId, Set<Role> roles) {
         return Jwts.builder()
                 .setSubject(userId) // user identifier (used later to load user details)
                 .claim("roles", roles) // roles added as custom claims for RBAC

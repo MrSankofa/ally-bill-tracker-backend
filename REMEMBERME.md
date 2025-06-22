@@ -12,6 +12,9 @@ Study / flashcards for
 * Why do we use DTOs instead of Entities
 * Why do we use the ElementCollection<Enum>
 * Differences between RBAC, ABAC, ACL
+* Controller advice
+* Gloabel exceptions
+* java exception hierarchy
 
 
 ```sql
@@ -45,3 +48,9 @@ Model	Based On	Use Case
 RBAC	User roles (e.g., ADMIN, USER)	Simpler apps or admin portals
 ABAC	Attributes (e.g., user.department == "HR")	Fine-grained control (e.g., SaaS apps)
 ACL	Access lists per resource	Per-record security (e.g., Google Docs sharing)
+
+
+Layer	Responsibility	Notes
+AuthController	Throws RuntimeException when login fails	Keeps controller logic clean
+GlobalExceptionHandler	Catches RuntimeException and returns ErrorResponse	Ensures consistent error format
+ErrorResponse	Custom DTO with error, message, timestamp	Easily extendable in the future
