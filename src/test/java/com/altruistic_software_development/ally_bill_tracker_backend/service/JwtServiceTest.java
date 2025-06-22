@@ -31,7 +31,7 @@ class JwtServiceTest {
         String userId = "abc123";
         String email = "abc@gmail.com";
         Set<Role> roles = Set.of(Role.USER, Role.ADMIN);
-        String token = jwtService.generateToken(userId, roles);
+        String token = jwtService.generateToken(email, roles);
 
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(Keys.hmacShaKeyFor("supersecretkey123456789012345678901234".getBytes())) // Use same key
