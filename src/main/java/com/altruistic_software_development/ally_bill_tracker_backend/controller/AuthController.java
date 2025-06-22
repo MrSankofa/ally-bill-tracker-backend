@@ -1,5 +1,6 @@
 package com.altruistic_software_development.ally_bill_tracker_backend.controller;
 
+import com.altruistic_software_development.ally_bill_tracker_backend.config.ApiPaths;
 import com.altruistic_software_development.ally_bill_tracker_backend.dto.AuthRequest;
 import com.altruistic_software_development.ally_bill_tracker_backend.dto.LoginResponse;
 import com.altruistic_software_development.ally_bill_tracker_backend.dto.RegisterRequest;
@@ -22,7 +23,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping(ApiPaths.AUTH_API)
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -67,7 +68,7 @@ public class AuthController {
         }
 
 
-        String token = jwtService.generateToken(user.getId(), user.getRoles());
+        String token = jwtService.generateToken(user.getEmail(), user.getRoles());
 
         LoginResponse loginResponse = LoginResponse.builder()
                 .userId(user.getId())

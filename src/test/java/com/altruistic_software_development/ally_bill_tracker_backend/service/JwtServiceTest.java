@@ -20,16 +20,18 @@ class JwtServiceTest {
     private JwtService jwtService;
 
     @Test
-    public void testGenerateTokenIncludesUserIdAndRoles() {
-        String token = jwtService.generateToken("abc123", Set.of(Role.USER, Role.ADMIN));
+
+        public void testGenerateTokenIncludesEmailAndRoles() {
+        String token = jwtService.generateToken("abc@gmail.com", Set.of(Role.USER, Role.ADMIN));
         assertNotNull(token);
     }
 
     @Test
     void testTokenContainsClaims() {
         String userId = "abc123";
+        String email = "abc@gmail.com";
         Set<Role> roles = Set.of(Role.USER, Role.ADMIN);
-        String token = jwtService.generateToken(userId, roles);
+        String token = jwtService.generateToken(email, roles);
 
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(Keys.hmacShaKeyFor("supersecretkey123456789012345678901234".getBytes())) // Use same key
@@ -37,8 +39,12 @@ class JwtServiceTest {
                 .parseClaimsJws(token)
                 .getBody();
 
-        assertEquals(userId, claims.getSubject());
-        assertTrue(((List<?>) claims.get("roles")).contains("USER"));
-        assertTrue(((List<?>) claims.get("roles")).contains("ADMIN"));
+        assertEquals(email, claims.getSubject());
+        List<?> rawRoles = claims.get("roles", List.class);
+        List<String> rolesClaim = rawRoles.stream()
+                .map(Object::toString)
+                .toList();
+        assertTrue(rolesClaim.contains("USER"));
+        assertTrue(rolesClaim.contains("ADMIN"));
     }
 }
