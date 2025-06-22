@@ -20,7 +20,8 @@ class JwtServiceTest {
     private JwtService jwtService;
 
     @Test
-    public void testGenerateTokenIncludesEmailAndRoles() {
+
+        public void testGenerateTokenIncludesEmailAndRoles() {
         String token = jwtService.generateToken("abc@gmail.com", Set.of(Role.USER, Role.ADMIN));
         assertNotNull(token);
     }
