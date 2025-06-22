@@ -1,5 +1,6 @@
 package com.altruistic_software_development.ally_bill_tracker_backend;
 
+import com.altruistic_software_development.ally_bill_tracker_backend.config.ApiPaths;
 import com.altruistic_software_development.ally_bill_tracker_backend.model.Role;
 import com.altruistic_software_development.ally_bill_tracker_backend.model.User;
 import com.altruistic_software_development.ally_bill_tracker_backend.repository.UserRepository;
@@ -16,6 +17,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 import java.util.Set;
+
+/*
+* TODO:
+*
+* add tests
+*
+Add negative tests (e.g. no token or invalid token)
+
+Create protected endpoints that require specific roles (e.g. ADMIN)
+
+Return authenticated user info from the token in your /protected-route response for debugging or verification
+* */
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -48,10 +61,10 @@ public class JwtAuthenticationFilterTest {
     @Test
     void shouldAuthorizeRequestWithValidToken() throws Exception {
         User user = userRepository.findByEmail("test@example.com").get();
-        String token = jwtService.generateToken(user.getId(), user.getRoles());
+        String token = jwtService.generateToken(user.getEmail(), user.getRoles());
 
         mockMvc.perform(
-                get("/api/v1/protected-route")
+                get(ApiPaths.BILLS_API + "/protected-route")
                     .header("Authorization", "Bearer " + token)
                 )
                 .andExpect(status().isOk());

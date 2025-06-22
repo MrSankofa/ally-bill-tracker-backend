@@ -1,9 +1,9 @@
 package com.altruistic_software_development.ally_bill_tracker_backend.service;
 
 import com.altruistic_software_development.ally_bill_tracker_backend.model.Role;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 
@@ -26,7 +26,7 @@ import java.util.Set;
 public class JwtService {
 
     // This is your signing secret. In production, store it in a secure environment variable (.env or AWS Secrets Manager).
-    private final String jwtSercret = "supersecretkey123456789012345678901234"; // TODO: store in .env later
+    private final String jwtSecret = "supersecretkey123456789012345678901234"; // TODO: store in .env later
 
     // Token validity duration (1 hour in milliseconds)
     private long expiration = 1000 * 60 * 60; // 1 hour
@@ -36,13 +36,13 @@ public class JwtService {
      * Used to sign and validate JWTs.
      */
     private Key getSignInKey() {
-        return Keys.hmacShaKeyFor(jwtSercret.getBytes());
+        return Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
 
     /**
      * Generates a JWT token for the authenticated user.
      *
-     * @param userId The unique user ID (UUID or DB ID)
+     * @param email The unique user ID (UUID or DB ID)
      * @param roles  The set of roles granted to the user (e.g., USER, ADMIN)
      * @return A signed JWT as a compact string (header.payload.signature)
      *
@@ -51,13 +51,44 @@ public class JwtService {
      * - The token includes custom claims (`roles`)
      * - Signature algorithm: HS256 (HMAC using SHA-256)
      */
-    public String generateToken(String userId, Set<Role> roles) {
+    public String generateToken(String email, Set<Role> roles) {
         return Jwts.builder()
-                .setSubject(userId) // user identifier (used later to load user details)
+                .setSubject(email) // user identifier (used later to load user details)
                 .claim("roles", roles) // roles added as custom claims for RBAC
                 .setIssuedAt(new Date()) //
                 .setExpiration(new Date(System.currentTimeMillis() + expiration)) // expires in 1 hour
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256) // secure signature
                 .compact(); // serialize token to string
+    }
+
+    /*Extracts the email (subject) from the JWT
+    *
+    * @Param token JWT token string
+    * @Return the userId (as stored in setSubject
+    * * */
+    public String extractUsername(String token) {
+        return getClaims(token).getBody().getSubject();
+    }
+
+    private Jws<Claims> getClaims(String token) {
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(getSignInKey())
+                    .build()
+                    .parseClaimsJws(token);
+        } catch (JwtException e) {
+            throw new RuntimeException("Invalid JWT Token");
+        }
+    }
+
+    public boolean isTokenValid(String token, UserDetails userDetails) {
+        final String userId = extractUsername(token);
+
+        return (userId.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
+
+    public boolean isTokenExpired(String token) {
+        Date expiration = getClaims(token).getBody().getExpiration();
+        return expiration.before(new Date());
     }
 }
