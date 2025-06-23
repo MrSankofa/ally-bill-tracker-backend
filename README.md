@@ -2,7 +2,7 @@
 
 # Updated Roadmap for Finance Tracker Development (Phases Reordered)
 
-## Phase 1: Security-First Foundation (⏳ In Progress)
+## Phase 1: Security-First Foundation ( In Progress)
 
 **Goal:** Secure the backend and lay groundwork for future extensibility
 
@@ -30,7 +30,7 @@
 
 ---
 
-## 💻 Phase 3: Frontend Shell with Enterprise Layout
+## Phase 3: Frontend Shell with Enterprise Layout
 
 **Goal:** Build maintainable, authenticated UI with modular components
 - [ ] Scaffold React app using Vite + pnpm workspaces
