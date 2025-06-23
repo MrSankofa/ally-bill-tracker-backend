@@ -12,4 +12,6 @@ public class RegisterResponse {
     private String userId;
     private String email;
     private Set<Role> roles;
+    private String message;
+    private String token;
 }

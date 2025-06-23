@@ -1,5 +1,9 @@
 package com.altruistic_software_development.ally_bill_tracker_backend.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -92,10 +96,14 @@ The check-in process stays safe, fast, and controlled
 
 * */
 
-@Getter
-@Setter
+@Data
 public class AuthRequest {
     // TODO: validation rules for email and password
+
+    @NotBlank @Email
+    @Size(min = 8)
     private String email;
+
+    @NotBlank @Size(min = 8)
     private String password;
 }

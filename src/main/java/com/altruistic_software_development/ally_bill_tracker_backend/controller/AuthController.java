@@ -9,6 +9,7 @@ import com.altruistic_software_development.ally_bill_tracker_backend.model.Role;
 import com.altruistic_software_development.ally_bill_tracker_backend.model.User;
 import com.altruistic_software_development.ally_bill_tracker_backend.repository.UserRepository;
 import com.altruistic_software_development.ally_bill_tracker_backend.service.JwtService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,10 +34,21 @@ public class AuthController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<RegisterResponse> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterRequest request) {
+        // check if user already exists
 
-        Set<Role> roles = request.getRoles() == null ? Set.of(Role.USER) :
-                request.getRoles();
+        if(userRepository.findByEmail(request.getEmail()).isPresent()) {
+            return ResponseEntity.badRequest().body(
+                    RegisterResponse.builder()
+                            .email(request.getEmail())
+                            .roles(request.getRoles())
+                            .message("User with email already exists")
+                            .build()
+            );
+        }
+
+
+        Set<Role> roles = Optional.ofNullable(request.getRoles()).orElse(Set.of(Role.USER));
 
         String hashedPassword = passwordEncoder.encode(request.getPassword());
 
@@ -48,10 +60,13 @@ public class AuthController {
 
         userRepository.save(user);
 
+        String token = jwtService.generateToken(user.getEmail(), user.getRoles());
+
         RegisterResponse registerResponse = RegisterResponse.builder()
                 .email(request.getEmail())
                 .userId(user.getId())
-                .roles(request.getRoles())
+                .roles(user.getRoles())
+                .token(token)
                 .build();
 
         URI location = URI.create("/api/users/" + user.getId());
@@ -60,7 +75,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody AuthRequest authRequest) {
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody AuthRequest authRequest) {
         User user = userRepository.findByEmail(authRequest.getEmail()).orElseThrow(() -> new RuntimeException("User not found - Invalid email"));
 
         if(!passwordEncoder.matches(authRequest.getPassword(), user.getPassword())) {
