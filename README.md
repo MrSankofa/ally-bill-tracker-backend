@@ -1,16 +1,16 @@
 # ally-bill-tracker-backend
 
-# ✅ Updated Roadmap for Finance Tracker Development (Phases Reordered)
+# Updated Roadmap for Finance Tracker Development (Phases Reordered)
 
-## 🔐 Phase 1: Security-First Foundation (⏳ In Progress)
+## Phase 1: Security-First Foundation (⏳ In Progress)
 
 **Goal:** Secure the backend and lay groundwork for future extensibility
 
-### ✅ Completed
+### Completed
 - [x] Setup Spring Boot backend with JWT-based authentication
 - [x] Configure `@SpringBootTest` for integration testing of endpoints
 
-### 🔧 Still To Do
+### Still To Do
 - [ ] Implement RBAC using `@PreAuthorize` and Spring Security roles
 - [ ] Use `.env` or `application.yml` for secret and config management
 - [ ] Add certificate-based HTTPS support (optional for local dev)
@@ -19,7 +19,7 @@
 
 ---
 
-## ⚙️ Phase 2: DevOps Integration (Next Priority)
+## Phase 2: DevOps Integration (Next Priority)
 
 **Goal:** Enable continuous delivery and secure deployments
 - [ ] Create GitHub + GitLab CI/CD YAML pipelines
@@ -43,7 +43,7 @@
 
 ---
 
-## 🧪 Phase 4: Enterprise Testing & Monitoring
+## Phase 4: Enterprise Testing & Monitoring
 
 ### Phase 4A – *Frontend Monitoring & Debugging*
 
@@ -66,7 +66,7 @@
 
 ---
 
-## 🔄 Phase 5 (Later): Microservices Refactor
+## Phase 5 (Later): Microservices Refactor
 
 **Goal:** Split monolith into scalable microservices
 - [ ] Extract Auth, Billing, and Reporting into separate services
