@@ -1,5 +1,3 @@
-# ally-bill-tracker-backend
-
 # ✅ Updated Roadmap for Finance Tracker Development (Phases Reordered)
 
 ## 🔐 Phase 1: Security-First Foundation (⏳ In Progress)
