@@ -3,13 +3,16 @@ package com.altruistic_software_development.ally_bill_tracker_backend.service;
 import com.altruistic_software_development.ally_bill_tracker_backend.model.Role;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * wtService generates signed JWT tokens that are used to authenticate users.
@@ -35,7 +38,7 @@ public class JwtService {
      * Returns the secret signing key derived from your `jwtSecret` string.
      * Used to sign and validate JWTs.
      */
-    private Key getSignInKey() {
+    public Key getSignInKey() {
         return Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
 
@@ -52,9 +55,14 @@ public class JwtService {
      * - Signature algorithm: HS256 (HMAC using SHA-256)
      */
     public String generateToken(String email, Set<Role> roles) {
+
+        Set<String> roleNames = roles.stream()
+                .map(Enum::name)
+                .collect(Collectors.toSet());
+
         return Jwts.builder()
                 .setSubject(email) // user identifier (used later to load user details)
-                .claim("roles", roles) // roles added as custom claims for RBAC
+                .claim("roles", roleNames) // roles added as custom claims for RBAC
                 .setIssuedAt(new Date()) //
                 .setExpiration(new Date(System.currentTimeMillis() + expiration)) // expires in 1 hour
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256) // secure signature
@@ -91,4 +99,14 @@ public class JwtService {
         Date expiration = getClaims(token).getBody().getExpiration();
         return expiration.before(new Date());
     }
+
+    @SuppressWarnings("unchecked")
+    public List<String> extractRoles(String token) {
+        Claims claims = getClaims(token).getBody();
+
+        System.out.println("Extracted roles: " + claims.get("roles"));
+
+        return claims.get("roles", List.class);
+    }
+
 }
